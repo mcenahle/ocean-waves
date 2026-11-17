@@ -8,7 +8,7 @@ function draw(){if(!paused)phase+=Math.min(deltaTime,50)*.001*Number(speedContro
 // Low, silver water glow underneath the type.
 for(let j=0;j<rows;j++){let y=j*unit,u=y/height,c=crest(u,t)*width;for(let k=-4;k<=4;k++){let a=Math.exp(-k*k/7)*3;fill(255,a);rect(c+k*unit*2,y,unit*2,unit+1)}}
 // Right-hand monumental lettering is part of the water, like the reference.
-push();fill(255,24);textFont('Arial');textStyle(BOLD);textAlign(CENTER,CENTER);if(english){translate(width*.90,height*.5);rotate(HALF_PI);textSize(Math.min(height*.2,width*.21));text('NETIQUETTE',0,0)}else{textSize(Math.min(height*.26,width*.22));for(let i=0;i<4;i++)text('文明上网'[i],width*.88,height*(.12+i*.255))}pop();stroke(255,23);line(width*.946,height*.07,width*.946,height*.94);line(width*.78,height*.5,width*.94,height*.5);noStroke();
+push();fill(255,24);textFont('Arial');textStyle(BOLD);textAlign(CENTER,CENTER);if(english){translate(width*.90,height*.5);rotate(HALF_PI);textSize(Math.min(height*.225,width*.27));text('NETIQUETTE',0,0)}else{textSize(Math.min(height*.35,width*.38));for(let i=0;i<4;i++)text('文明上网'[i],width*.91,height*(.08+i*.28))}pop();stroke(255,23);line(width*.946,height*.07,width*.946,height*.94);line(width*.78,height*.5,width*.94,height*.5);noStroke();
 const ctx=drawingContext;
 for(let j=-2;j<rows+2;j++){const v=j/rows,c=crest(v,t),rowAngle=Math.sin(v*37+t)*.25;
 for(let i=-3;i<cols*.80;i++){const u=i/cols,d=u-c,body=Math.exp(-(((d+.055)/.115)**2)),edge=Math.exp(-((d/.022)**2)),fade=1-smoothstep(.70,.80,u);if(fade<=0)continue;
