@@ -16,10 +16,16 @@ for(let j=0;j<rows;j++){let y=j*unit,u=y/height,centers=visibleCrests(u,t);for(c
 push();fill(255,24);textFont('Arial');textStyle(BOLD);textAlign(CENTER,CENTER);if(english){translate(width*.90,height*.5);rotate(HALF_PI);textSize(Math.min(height*.225,width*.27));text('NETIQUETTE',0,0)}else{textSize(Math.min(height*.35,width*.38));for(let i=0;i<4;i++)text('文明上网'[i],width*.91,height*(.08+i*.28))}pop();stroke(255,23);line(width*.946,height*.07,width*.946,height*.94);line(width*.78,height*.5,width*.94,height*.5);noStroke();
 const ctx=drawingContext;
 for(let j=-2;j<rows+2;j++){const v=j/rows,c=crest(v,t),rowAngle=Math.sin(v*37+t)*.25;
-for(let i=-3;i<cols*.80;i++){const u=i/cols,d=waveDistance(u,v,t),body=Math.exp(-(((d+.055)/.115)**2)),edge=Math.exp(-((d/.022)**2)),fade=1-smoothstep(.70,.80,u);if(fade<=0)continue;
-const turbulence=Math.sin(v*65+t*2.8+u*19),x=i*unit+body*width*.035+edge*width*.022*turbulence,y=j*unit+body*unit*1.9*Math.sin(v*32-u*20+t*1.8),angle=body*rowAngle+edge*.75*turbulence;
-const cs=Math.cos(angle),sn=Math.sin(angle),sx=1+edge*.35,sy=1+body*.22,g=glyphs[((i*17+j*31)%7)<3?1:0];
-ctx.setTransform(cs*sx,sn*sx,-sn*sy,cs*sy,x,y);ctx.globalAlpha=Math.min(1,(25+body*85+edge*170)*fade/255);ctx.drawImage(g,-g.width/2,-g.height/2);
+for(let i=-3;i<cols*.80;i++){const u=i/cols,d=waveDistance(u,v,t),body=Math.exp(-(((d+.085)/.17)**2)),edge=Math.exp(-((d/.038)**2)),wake=Math.exp(-(((d+.19)/.105)**2))*(1-smoothstep(-.045,.015,d)),fade=1-smoothstep(.70,.80,u);if(fade<=0)continue;
+const turbulence=Math.sin(v*65+t*2.8+u*19),x=i*unit+body*width*.035+edge*width*.022*turbulence,y=j*unit+body*unit*1.9*Math.sin(v*32-u*20+t*1.8),angle=body*rowAngle+edge*.75*turbulence+wake*.13*Math.sin(v*45+t*2);
+const cs=Math.cos(angle),sn=Math.sin(angle),sx=1+body*.85+edge*.75+wake*.35,sy=1+body*.22,g=glyphs[((i*17+j*31)%7)<3?1:0];
+ctx.setTransform(cs*sx,sn*sx,-sn*sy,cs*sy,x,y);ctx.globalAlpha=Math.min(1,(25+body*85+edge*150+wake*38)*fade/255);ctx.drawImage(g,-g.width/2,-g.height/2);
+// Two offset glyphs form a broken, fading wake behind the right-moving crest.
+// Reuse the same glyph bitmap and transform to keep the extra work bounded.
+if(wake>.16){for(let echo=1;echo<=2;echo++){
+ctx.globalAlpha=wake*(echo===1?.20:.095)*fade;
+ctx.drawImage(g,-g.width/2-unit*echo*.85,-g.height/2+Math.sin(v*39+t+echo)*unit*.22);
+}}
 if(edge>.25){ctx.globalAlpha=edge*90/255;ctx.drawImage(g,-g.width/2+unit*.20,-g.height/2-unit*.12)}
 }}ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1;
 // Thin foam filaments, pulled along the same contour as the character field.
