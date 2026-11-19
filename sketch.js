@@ -6,7 +6,8 @@ function buildGlyphs(unit){glyphUnit=unit;glyphs=['0','1'].map(bit=>{const c=doc
 // A periodic train advances rightwards: the next crest is already entering
 // while its predecessor leaves. Periodic distance keeps the seam off the foam.
 const WAVE_SPACING=.72;
-function crest(y,t){return -.15+t*.105+.038*sin(y*11+t*1.4)+.022*sin(y*27-t*2)+.011*sin(y*57+t*2.7)+.005*sin(y*117-t*3)}
+// Three broad lobes down the screen; small harmonics retain the foam texture.
+function crest(y,t){const a=y*Math.PI*2*3+t*1.4;return -.15+t*.105+.052*sin(a)+.008*sin(a*2+.5)+.003*sin(a*4-t*.4)}
 function waveDistance(x,y,t){const d=x-crest(y,t);return d-WAVE_SPACING*Math.floor(d/WAVE_SPACING+.5)}
 function visibleCrests(y,t){const anchor=crest(0,t),base=anchor-WAVE_SPACING*Math.floor(anchor/WAVE_SPACING)+crest(y,t)-anchor;return [base-WAVE_SPACING,base,base+WAVE_SPACING,base+2*WAVE_SPACING]}
 function draw(){if(!paused)phase+=Math.min(deltaTime,50)*.001*Number(speedControl.value);background(6);const t=phase;const unit=Math.max(10,height/62),cols=Math.ceil(width/unit),rows=Math.ceil(height/unit);if(glyphUnit!==unit)buildGlyphs(unit);textSize(unit*.91);textAlign(CENTER,CENTER);noStroke();
@@ -15,9 +16,9 @@ for(let j=0;j<rows;j++){let y=j*unit,u=y/height,centers=visibleCrests(u,t);for(c
 // Right-hand monumental lettering is part of the water, like the reference.
 push();fill(255,24);textFont('Arial');textStyle(BOLD);textAlign(CENTER,CENTER);if(english){translate(width*.90,height*.5);rotate(HALF_PI);textSize(Math.min(height*.225,width*.27));text('NETIQUETTE',0,0)}else{textSize(Math.min(height*.35,width*.38));for(let i=0;i<4;i++)text('文明上网'[i],width*.91,height*(.08+i*.28))}pop();stroke(255,23);line(width*.946,height*.07,width*.946,height*.94);line(width*.78,height*.5,width*.94,height*.5);noStroke();
 const ctx=drawingContext;
-for(let j=-2;j<rows+2;j++){const v=j/rows,c=crest(v,t),rowAngle=Math.sin(v*37+t)*.25;
+for(let j=-2;j<rows+2;j++){const v=j/rows,c=crest(v,t),rowAngle=Math.sin(v*22.2+t)*.25;
 for(let i=-3;i<cols*.80;i++){const u=i/cols,d=waveDistance(u,v,t),body=Math.exp(-(((d+.085)/.17)**2)),edge=Math.exp(-((d/.038)**2)),wake=Math.exp(-(((d+.19)/.105)**2))*(1-smoothstep(-.045,.015,d)),fade=1-smoothstep(.70,.80,u);if(fade<=0)continue;
-const turbulence=Math.sin(v*65+t*2.8+u*19),x=i*unit+body*width*.035+edge*width*.022*turbulence,y=j*unit+body*unit*1.9*Math.sin(v*32-u*20+t*1.8),angle=body*rowAngle+edge*.75*turbulence+wake*.13*Math.sin(v*45+t*2);
+const turbulence=Math.sin(v*39+t*2.8+u*19),x=i*unit+body*width*.035+edge*width*.022*turbulence,y=j*unit+body*unit*1.9*Math.sin(v*19.2-u*20+t*1.8),angle=body*rowAngle+edge*.75*turbulence+wake*.13*Math.sin(v*27+t*2);
 const cs=Math.cos(angle),sn=Math.sin(angle),sx=1+body*.85+edge*.75+wake*.35,sy=1+body*.22,g=glyphs[((i*17+j*31)%7)<3?1:0];
 ctx.setTransform(cs*sx,sn*sx,-sn*sy,cs*sy,x,y);ctx.globalAlpha=Math.min(1,(25+body*85+edge*150+wake*38)*fade/255);ctx.drawImage(g,-g.width/2,-g.height/2);
 // Two offset glyphs form a broken, fading wake behind the right-moving crest.
